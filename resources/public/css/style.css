@@ -1,0 +1,15 @@
+/* some style */
+
+textarea {
+    font-family: Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;;
+}
+
+pre {
+    padding: 10px;
+    background: #ccc;
+}
+
+.history-link {
+    display: block;
+    margin-bottom: 7px;
+}

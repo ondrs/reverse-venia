@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+        <h5 class="h4">Reverse Venia</h5>
+        <span class="text-muted">
+            GraphQl to
+            <a href="https://github.com/Vincit/venia" target="_blank">Venia</a>
+            Clojure syntax query generation
+        </span>
+    </div>
+</nav>
+
+<div class="container-fluid" style="margin-top: 20px;">
+
+    <div class="row">
+        <div class="col-sm">
+            <form id="form">
+                <div class="form-group">
+                    <textarea id="query" class="form-control" rows="20">
+query {
+  human (id: {aa: 132}) {
+    id
+    name
+    friends {
+      id
+      name
+      friends {
+        id
+      }
+    }
+  }
+}
+                    </textarea>
+                </div>
+                <input type="submit" value="Parse Query" class="btn btn-primary">
+            </form>
+        </div>
+        <div class="col-sm">
+            <pre id="result" class="bg-light"># Submit the form to see the result</pre>
+
+            <hr>
+
+            <h4>History</h4>
+
+            <div id="history"></div>
+        </div>
+    </div>
+
+</div>
+<script src="js/compiled/reverse_venia.js" type="text/javascript"></script>
+</body>
+</html>
