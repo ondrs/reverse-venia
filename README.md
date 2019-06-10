@@ -1,4 +1,4 @@
-# reverse-venia
+# reverse-venia ![](https://travis-ci.org/ondrs/reverse-venia.svg?branch=master)
 
 GraphQL to Venia Clojure syntax query generation
 https://reverse-venia.herokuapp.com
