@@ -1,5 +1,6 @@
 (ns user
   (:require [figwheel-sidecar.repl-api :as f]
+            [reverse-venia.states]
             [clojure.tools.namespace.repl :refer [refresh]]
             [mount.core :as mount :refer [defstate]]))
 

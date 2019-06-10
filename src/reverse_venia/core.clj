@@ -1,10 +1,9 @@
 (ns reverse-venia.core
   (:gen-class)
   (:require [mount.core :as mount]
-            [reverse-venia.server]))
+            [reverse-venia.states]))
 
 
 (defn -main
   [& args]
-  (-> (mount/with-args {:env :prod})
-      mount/start))
+  (mount/start))

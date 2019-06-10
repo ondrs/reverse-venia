@@ -7,10 +7,11 @@
   :min-lein-version "2.7.1"
 
   :dependencies [[org.clojure/clojure "1.10.0"]
-                 [org.clojure/clojurescript "1.10.238"]
+                 [org.clojure/clojurescript "1.10.520"]
                  [org.clojure/core.async "0.4.474"]
                  [graphql-clj "0.2.6"]
                  [mount "0.1.16"]
+                 [environ "1.1.0"]
                  [ring/ring-core "1.7.1"]
                  [ring/ring-json "0.4.0"]
                  [jumblerg/ring-cors "2.0.0"]
@@ -52,10 +53,11 @@
                ;; lein cljsbuild once min
                {:id           "min"
                 :source-paths ["src"]
-                :compiler     {:output-to     "resources/public/js/compiled/reverse_venia.js"
-                               :main          reverse-venia.client
-                               :optimizations :advanced
-                               :pretty-print  false}}]}
+                :compiler     {:output-to       "resources/public/js/compiled/reverse_venia.js"
+                               :closure-defines {reverse-venia.client/base-url ""}
+                               :main            reverse-venia.client
+                               :optimizations   :advanced
+                               :pretty-print    false}}]}
 
   :figwheel {;; :http-server-root "public" ;; default and assumes "resources"
              ;; :server-port 3449 ;; default
@@ -68,20 +70,14 @@
   ;; Setting up nREPL for Figwheel and ClojureScript dev
   ;; Please see:
   ;; https://github.com/bhauman/lein-figwheel/wiki/Using-the-Figwheel-REPL-within-NRepl
-  :profiles {:dev     {:dependencies  [[binaryage/devtools "0.9.9"]
-                                       [figwheel-sidecar "0.5.16"]
-                                       [org.clojure/tools.namespace "0.2.11"]]
-                       ;; need to add dev source path here to get user.clj loaded
-                       :source-paths  ["src" "dev"]
-                       ;; need to add the compliled assets to the :clean-targets
-                       :clean-targets ^{:protect false} ["resources/public/js/compiled"
-                                                         :target-path]}
-             :uberjar {:aot        :all
-                       :prep-tasks ["compile" ["cljsbuild" "once"]]
-                       :cljsbuild  {:builds
-                                    [{:id           "min"
-                                      :source-paths ["src"]
-                                      :compiler     {:output-to     "resources/public/js/compiled/reverse_venia.js"
-                                                     :main          reverse-venia.client
-                                                     :optimizations :advanced
-                                                     :pretty-print  false}}]}}})
+  :profiles {:dev        {:dependencies  [[binaryage/devtools "0.9.9"]
+                                          [figwheel-sidecar "0.5.16"]
+                                          [org.clojure/tools.namespace "0.3.0"]]
+                          ;; need to add dev source path here to get user.clj loaded
+                          :source-paths  ["src" "dev" "test"]
+                          ;; need to add the compliled assets to the :clean-targets
+                          :clean-targets ^{:protect false} ["resources/public/js/compiled"
+                                                            :target-path]}
+
+             :uberjar    {:aot        :all
+                          :prep-tasks ["compile" ["cljsbuild" "once" "min"]]}})

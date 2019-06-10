@@ -1,8 +1,10 @@
-(ns reverse-venia.parser
+(ns reverse-venia.graphql-parser
   (:require [graphql-clj.parser :as parser]))
 
 
 (declare reduce-arguments)
+(declare argument-value)
+
 
 (defn argument-value
   "Parses argument value node"

@@ -8,6 +8,7 @@
 
 (enable-console-print!)
 
+(goog-define base-url "http://localhost:3448")
 
 (defonce app-state
   (atom {:history []}))
@@ -29,7 +30,15 @@
       html)))
 
 
+
+(defn post-parse-request
+  [query]
+  (http/post (str base-url "/parse")
+             {:json-params {:query query}}))
+
+
 (declare on-js-reload)
+
 
 (defn on-submit
   [e]
@@ -38,9 +47,7 @@
     (let [result-el     (dom/getElement "result")
           query-el      (dom/getElement "query")
           query         (.-value query-el)
-          response      (async/<!
-                          (http/post "http://localhost:3448/parse"
-                                     {:json-params {:query query}}))
+          response      (async/<! (post-parse-request query))
           response-body (:body response)]
 
       ;; Update History

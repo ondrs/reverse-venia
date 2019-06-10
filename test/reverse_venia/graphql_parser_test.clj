@@ -1,6 +1,6 @@
-(ns reverse-venia.parser-test
+(ns reverse-venia.graphql-parser-test
   (:require [clojure.test :refer :all]
-            [reverse-venia.parser :as parser]))
+            [reverse-venia.graphql-parser :as graphql-parser]))
 
 
 (def sample-query
@@ -12,13 +12,13 @@
 
 (deftest reduce-arguments-test
   (testing "should reduce arguments vector into a flat map"
-    (let [result (parser/reduce-arguments
+    (let [result (graphql-parser/reduce-arguments
                    [{:tag :argument, :name "id", :value {:tag :string-value, :image "\"1002\"", :value "1002"}}])]
       (is (= result)
           {:id "1002"})))
 
   (testing "should reduce arguments vector into a nested map"
-    (let [result (parser/reduce-arguments
+    (let [result (graphql-parser/reduce-arguments
                    [{:tag   :argument,
                      :name  "id",
                      :value {:tag :object-value, :fields [{:tag :object-field, :name "uuid", :value {:tag :int-value, :image "132", :value 132}}
@@ -29,11 +29,11 @@
 
 (deftest parse-graphql-test
   (testing "should parse sample query"
-    (is (= (parser/parse-graphql sample-query)
+    (is (= (graphql-parser/parse-graphql sample-query)
            [[:human {:id 123} [:id :name [:friends [:id :name [:friends [:id]]]]]]])))
 
   (testing "should parse complex mutation query"
-    (is (= (parser/parse-graphql sample-mutation)
+    (is (= (graphql-parser/parse-graphql sample-mutation)
            [[:property_create
              {:external_id "test-property",
               :name        "test-property",

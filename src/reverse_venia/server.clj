@@ -4,15 +4,15 @@
             [jumblerg.middleware.cors :as jm.cors]
             [compojure.core :refer [defroutes POST]]
             [compojure.route :as route]
-            [reverse-venia.parser :as parser]
+            [reverse-venia.graphql-parser :as graphql-parser]
             [clojure.pprint :as pprint]
-            [mount.core :as mount :refer [defstate]]))
+            [mount.core :as mount]))
 
 
 (defn parse-handler
   [{:keys [body] :as request}]
   (try
-    (let [result (parser/parse-graphql (get body :query ""))]
+    (let [result (graphql-parser/parse-graphql (get body :query ""))]
       {:status 200
        :body   {:raw       result
                 :formatted (-> result pprint/pprint with-out-str)}})
@@ -35,7 +35,7 @@
                  #(if (= "/" %) "/index.html" %)))))
 
 
-(def app
+(def handler
   (-> routes
       (wrap-dir-index)
       (jm.cors/wrap-cors identity)
@@ -43,9 +43,9 @@
       (rm.json/wrap-json-response)))
 
 
-(defstate server
-  :start (jetty/run-jetty app {:port  3448
-                               ;; join the main thread only in production
-                               :join? (= (:env (mount/args))
-                                         :prod)})
-  :stop (.stop server))
+(defn start-server
+  [config]
+  (jetty/run-jetty handler {:port  (:port config)
+                            ;; join the main thread only in production
+                            :join? (not= (:env (mount/args))
+                                         :dev)}))
