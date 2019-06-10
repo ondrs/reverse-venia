@@ -1,39 +1,132 @@
 # reverse-venia
 
-FIXME: Write a one-line description of your library/project.
+GraphQL to Venia Clojure syntax query generation
+https://reverse-venia.herokuapp.com
 
 ## Overview
 
-FIXME: Write a paragraph about the library/project and highlight its goals.
+Writing GraphQL queries using [GraphiQL](https://github.com/graphql/graphiql) is nice.
+Auto suggestion works well, code is nicely highlighted and can be reformatted with a single click of a button.
 
-## Setup
+However, while write GraphQL in pure Clojure we don't have such a luxury. 
+We can use [Venia](https://github.com/Vincit/venia) library to write queries using Clojure data structures but this won't be good for prototyping.
+GraphiQL with its features will be much faster.
 
-To get an interactive development environment run:
+Therefore you open your browser with GraphiQL connected to the latest GraphQL schema and start typing.
+After you are done with your complicated nested query or mutation you can end up with something like this.
 
-    lein figwheel
+```graphql
+mutation {
+  property_create(external_id: "test-property", name: "test-property", email: "jesse@emaıl.com", options: {deposit: {business_name: "6 Nottingham", external_account: {object: "bank_account", country: "US", currency: "usd", account_number: "000123456789", routing_number: "110000000", account_holder_type: "individual", account_holder_name: "Holder of Account"}, payout_schedule: {interval: "daily"}, tos_acceptance: {date: 1558351184, ip: "45.33.63.187"}}, ops: {business_name: "6 Nottingham", external_account: {object: "bank_account", country: "US", currency: "usd", account_number: "000123456789", routing_number: "110000000", account_holder_type: "individual", account_holder_name: "Holder of Account"}, payout_schedule: {interval: "daily"}, tos_acceptance: {date: 1558351184, ip: "45.33.63.187"}}}) {
+    id
+    payment {
+      is_active
+      is_canceled
+      billing_start
+      canceled_on
+      fee_percent
+      payment_type
+      customer {
+        id
+        name
+        plan {
+          id
+          amount
+          date
+          source {
+            id
+            type
+          }
+        }
+      }
+    }
+  }
+}
+```
 
-and open your browser at [localhost:3449](http://localhost:3449/).
-This will auto compile and send all changes to the browser without the
-need to reload. After the compilation process is complete, you will
-get a Browser Connected REPL. An easy way to try it is:
+Ok, what now?
 
-    (js/alert "Am I connected?")
+You are lazy and you don't want to just blindly rewrite it into Venia Clojure syntax.
+You can image the final result. Lots of typos, wrongly nested vectors and maps.
+It will be just too much work.
 
-and you should see an alert in the browser window.
+Do you really thing you can produce this code easily and without any errors? 
 
-To clean all compiled files:
+```clojure
+[[:property_create
+  {:external_id "test-property",
+   :name        "test-property",
+   :email       "jesse@emaıl.com",
+   :options
+                {:deposit
+                 {:business_name   "6 Nottingham",
+                  :external_account
+                                   {:object              "bank_account",
+                                    :country             "US",
+                                    :currency            "usd",
+                                    :account_number      "000123456789",
+                                    :routing_number      "110000000",
+                                    :account_holder_type "individual",
+                                    :account_holder_name "Holder of Account"},
+                  :payout_schedule {:interval "daily"},
+                  :tos_acceptance  {:date 1558351184, :ip "45.33.63.187"}},
+                 :ops
+                 {:business_name   "6 Nottingham",
+                  :external_account
+                                   {:object              "bank_account",
+                                    :country             "US",
+                                    :currency            "usd",
+                                    :account_number      "000123456789",
+                                    :routing_number      "110000000",
+                                    :account_holder_type "individual",
+                                    :account_holder_name "Holder of Account"},
+                  :payout_schedule {:interval "daily"},
+                  :tos_acceptance  {:date 1558351184, :ip "45.33.63.187"}}}}
+  [:id
+   [:payment
+    [:is_active
+     :is_canceled
+     :billing_start
+     :canceled_on
+     :fee_percent
+     :payment_type
+     [:customer
+      [:id
+       :name
+       [:plan [:id :amount :date [:source [:id :type]]]]]]]]]]]
+```
 
-    lein clean
+Luckily, there is a great tool for lazy Clojure developers!
 
-To create a production build run:
+Just go to https://reverse-venia.herokuapp.com, dump your code in, and copy & past it back.
 
-    lein do clean, cljsbuild once min
+**Job done!**
 
-And open your browser in `resources/public/index.html`. You will not
-get live reloading, nor a REPL. 
 
-## License
+## Docker
 
-Copyright © 2014 FIXME
+https://cloud.docker.com/repository/docker/ondrs/reverse-venia
 
-Distributed under the Eclipse Public License either version 1.0 or (at your option) any later version.
+```bash
+docker run -p 80:80 ondrs/reverse-venia
+```
+
+
+## Local development
+
+Start your REPL.
+In `dev/user.clj` run 
+```clojure
+(go)
+```
+
+Web server runs at http://localhost:3448.
+Figwheel at http://localhost:3449
+
+
+## Deployment to Heroku
+
+```bash
+heroku container:push web
+heroku container:release web
+```
